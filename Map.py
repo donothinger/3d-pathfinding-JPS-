@@ -18,6 +18,8 @@ class Map:
     def traversable(self, coord: Tuple[int, int, int]) -> bool:
         return not self._cells[coord]
 
+
+    # TODO: Нужно добавить проверку на срезание углов
     def get_neighbors(self,coord: Tuple[int, int, int]) -> List[Tuple[int, int, int]]:
         neighbors = []
         i, j, k = coord
@@ -28,9 +30,9 @@ class Map:
         delta = tuple(delta)
 
         for dx, dy, dz in delta:
-            ni, nj, nk = i + dx, j + dy, k + dz
-            if self.in_bounds(ni, nj, nk) and self.traversable(ni, nj, nk):
-                neighbors.append((ni, nj, nk))
+            new_coord = i + dx, j + dy, k + dz
+            if self.in_bounds(new_coord) and self.traversable(new_coord):
+                neighbors.append(new_coord)
         return neighbors
 
     def get_size(self) -> Tuple[int, int, int]:
@@ -51,7 +53,7 @@ def read_cells_from_file(file_path: str) -> npt.NDArray:
     cells = np.zeros(shape, dtype=np.int8)
     coordinates = list(map(\
                         lambda x: tuple(map(int, x.split())),\
-                        file.read().spilt('\n')))
+                        file.read().split('\n')[:-1]))
     for coord in coordinates:
         cells[coord] = 1
     

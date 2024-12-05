@@ -1,7 +1,7 @@
 from typing import Callable, Type, Tuple, Optional, Iterable
-from Node import Node, compute_cost
+from Node import Node
 from SearchTreePQD import SearchTreePQD
-from Map import Map
+from Map import Map, compute_cost
 
 def astar(
     task_map: Map,
@@ -32,7 +32,7 @@ def astar(
                 ast.add_to_open(s_new)
             else:
                 if not ast.was_expanded(s_new):
-                    s_old = ast.find_node(s_new.i, s_new.j)
+                    s_old = ast.find_node(s_new.coord)
                     if s_old > s_new:
                         s_old.g = s_new.g
                         s_old.f = s_new.f
