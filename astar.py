@@ -25,7 +25,7 @@ def astar(
         if(current_node.coord == goal_coord):
             print("During the search, the following number of OPEN dublicates was encountered: ", ast.number_of_open_duplicates)
             return True, current_node, steps, len(ast), ast.opened, ast.expanded
-        for coord in task_map.get_neighbors(current_node.coord):
+        for coord in task_map.get_successors(current_node.coord):
             s_new = Node(coord=coord, g=current_node.g + compute_cost(current_node.coord, coord),\
                           h=heuristic_func(coord, goal_coord), parent=current_node)
             if not ast.was_opened(s_new):
