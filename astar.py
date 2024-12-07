@@ -37,12 +37,13 @@ def astar_from_nodes(
     steps = 0
 
     ast.add_to_open(start_node)
-
+    debug_flag = task_map.get_size()[0] > 10
     while(not ast.open_is_empty()):
         steps += 1
         current_node = ast.get_best_node_from_open()
         ast.add_to_closed(current_node)
-
+        if debug_flag:
+            print(current_node.coord)
         if(current_node.coord == goal_node.coord):
             print("During the search, the following number of OPEN dublicates was encountered: ", ast.number_of_open_duplicates)
             return True, current_node, steps, len(ast), ast.opened, ast.expanded

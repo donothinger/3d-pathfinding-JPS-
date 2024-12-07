@@ -51,6 +51,7 @@ class JPS(Map):
         current_node_local = Node(current_local_coord,
                                   g = self.compute_cost(coord1=parent_local_coord, coord2=current_local_coord))
         imaginary_node = Node((4, 4, 4)) #Not a real node
+
         dijkstra_results_from_current = astar_from_nodes(locality,
                                               current_node_local,
                                               imaginary_node,
@@ -77,7 +78,10 @@ class JPS(Map):
     def jump(self, 
              coord: Tuple[int, int, int], 
              direction: Tuple[int, int, int],
-             goal: Tuple[int, int, int], recursive=False):
+             goal: Tuple[int, int, int], recursive:bool =False,\
+             scan_depth: int = 0, scan_limit: int = 20):
+        if scan_depth >= scan_limit:
+            return coord
         i, j, k = coord
         dx, dy, dz = direction
         new_coord = i + dx, j + dy, k + dz
@@ -93,18 +97,23 @@ class JPS(Map):
                 canonical_directions = [(dx, 0, 0), (0, dy, 0), (0, 0, dz),\
                                         (dx, dy, 0), (dx, 0, dz), (0, dy, dz)]
                 for can_direction in canonical_directions:
-                    if self.jump(new_coord, can_direction, goal, recursive=True) is not None:
+                    if self.jump(new_coord, can_direction, goal, recursive=True,\
+                                  scan_depth=scan_depth+1, scan_limit=scan_limit) is not None:
                         return new_coord
             if sum(direction) not in (-1, 1): # 2d-diagonal
                 canonical_directions = [(dx, 0, 0), (0, dy, 0), (0, 0, dz)]
-                canonical_directions.remove((0, 0, 0))
+                if((0, 0, 0) in canonical_directions):
+                    canonical_directions.remove((0, 0, 0))
                 for can_direction in canonical_directions:
-                    if self.jump(new_coord, can_direction, goal, recursive=True) is not None:
+                    if self.jump(new_coord, can_direction, goal, recursive=True,\
+                                 scan_depth=scan_depth+1, scan_limit=scan_limit) is not None:
                         return new_coord
-        return self.jump(new_coord, direction, goal, recursive)
+        return self.jump(new_coord, direction, goal, recursive,\
+                         scan_depth=scan_depth+1, scan_limit=scan_limit)
 
     def get_successors(self, coord: Tuple[int, int, int], 
                              goal:  Tuple[int, int, int]) -> List[Tuple[int, int, int]]:
+        print(1)
         successors = []
         coord_steps = [-1, 0, 1]
         delta = [(x, y, z) for x in coord_steps for y in coord_steps for z in coord_steps]
