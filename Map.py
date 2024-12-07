@@ -197,6 +197,42 @@ class Map:
             neighbors.append((x - 1, y - 1, z - 1))
 
         return neighbors
+        
+    def jump(self, coord, direction, goal, recursive=False):
+        i, j, k = coord
+        dx, dy, dz = direction
+        new_coord = i + dx, j + dy, k + dz
+        if not self.walkable(new_coord):
+            return None
+        if new_coord == goal:
+            return new_coord
+        for neigh in self.get_neighbors(new_coord):
+            if neigh[3]:
+                return new_coord
+        if not recursive:
+            if 0 not in direction: # 3d-diagonal
+                canonical_directions = [(dx, 0, 0), (0, dy, 0), (0, 0, dz), (dx, dy, 0), (dx, 0, dz), (0, dy, dz)]
+                for can_direction in canonical_directions:
+                    if self.jump(new_coord, can_direction, goal, recursive=True) is not None:
+                        return new_coord
+            if sum(direction) not in (-1, 1): # 2d-diagonal
+                canonical_directions = [(dx, 0, 0), (0, dy, 0), (0, 0, dz)]
+                canonical_directions.remove((0, 0, 0))
+                for can_direction in canonical_directions:
+                    if self.jump(new_coord, can_direction, goal, recursive=True) is not None:
+                        return new_coord
+        return self.jump(new_coord, direction, goal)
+
+    def get_successors(self, coord: Tuple[int, int, int], goal: Tuple[int, int, int]) -> List[Tuple[int, int, int]]:
+        successors = []
+        coord_steps = [-1, 0, 1]
+        delta = [(x, y, z) for x in coord_steps for y in coord_steps for z in coord_steps]
+        delta.remove((0, 0, 0))
+        delta = tuple(delta)
+        for direction in delta:
+            successors.append(self.jump(coord, direction, goal))
+        successors = filter(None, successors)
+        return successors
 
     def get_size(self) -> Tuple[int, int, int]:
         return self._height, self._width, self._depth
