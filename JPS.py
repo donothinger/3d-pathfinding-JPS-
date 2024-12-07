@@ -101,7 +101,7 @@ class JPS(Map):
                 for can_direction in canonical_directions:
                     if self.jump(new_coord, can_direction, goal, recursive=True) is not None:
                         return new_coord
-        return self.jump(new_coord, direction, goal)
+        return self.jump(new_coord, direction, goal, recursive)
 
     def get_successors(self, coord: Tuple[int, int, int], 
                              goal:  Tuple[int, int, int]) -> List[Tuple[int, int, int]]:
