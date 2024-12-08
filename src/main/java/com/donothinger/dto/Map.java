@@ -25,7 +25,7 @@ public class Map {
     }
 
     public Boolean traversable(Point point) {
-        return this.obstacleSet.contains(point);
+        return !this.obstacleSet.contains(point);
     }
 
     public Boolean walkable(Point point) {
@@ -43,6 +43,9 @@ public class Map {
         for (Integer dx : coord_step) {
             for (Integer dy : coord_step) {
                 for (Integer dz : coord_step) {
+                    if (dx == 0 && dy == 0 && dz == 0) {
+                        continue;
+                    }
                     Point next_point = new Point(x + dx, y + dy, z + dz);
                     if (this.walkable(next_point)) {
                         neighbors.add(next_point);

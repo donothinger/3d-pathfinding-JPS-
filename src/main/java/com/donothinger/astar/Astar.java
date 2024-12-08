@@ -29,15 +29,13 @@ public class Astar {
             steps += 1;
             Node currentNode = this.searchTree.getBestNodeFromOpen();
             this.searchTree.addToClosed(currentNode);
-            System.out.println(steps);
-            if (currentNode.getPoint() == this.goalNode.getPoint()) {
+            if (currentNode.getPoint().equals(this.goalNode.getPoint())) {
                 System.out.println("During the search, the following number of OPEN dublicates was encountered: " +
                         String.valueOf(this.searchTree.getEncOpenDuplicates()));
                 return currentNode;
             }
 
             List<Point> successors = this.taskMap.getSuccessors(currentNode.getPoint(), goalPoint);
-
             for (Point coord : successors) {
                 Node newNode = new Node(coord,
                         currentNode.getG() + this.taskMap.computeCost(currentNode.getPoint(), coord),
