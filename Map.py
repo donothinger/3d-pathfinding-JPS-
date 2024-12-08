@@ -65,21 +65,9 @@ class Map:
             neighbors.append((x, y, z - 1))
             lb = True
 
-        cd0 = cs0 and cs1
-        cd1 = cs1 and cs2
-        cd2 = cs2 and cs3
-        cd3 = cs3 and cs0
-
-        us0 = cs0 and ut
-        us1 = cs1 and ut
-        us2 = cs2 and ut
-        us3 = cs3 and ut
-
-        ls0 = cs0 and lb
-        ls1 = cs1 and lb
-        ls2 = cs2 and lb
-        ls3 = cs3 and lb
-
+        cd0 = cd1 = cd2 = cd3 = True
+        us0 = us1 = us2 = us3 = True
+        ls0 = ls1 = ls2 = ls3 = True
 
         # +x -y
         if cd0 and self.walkable((x + 1, y - 1, z)):
@@ -154,15 +142,8 @@ class Map:
             ls3 = False
 
         # remaining daigonal neighbors
-        ud0 = cs0 and cd0 and cs1 and us0 and us1 and ut
-        ud1 = cs1 and cd1 and cs2 and us1 and us2 and ut
-        ud2 = cs2 and cd2 and cs3 and us2 and us3 and ut
-        ud3 = cs3 and cd3 and cs0 and us3 and us0 and ut
-
-        ld0 = cs0 and cd0 and cs1 and ls0 and ls1 and lb
-        ld1 = cs1 and cd1 and cs2 and ls1 and ls2 and lb
-        ld2 = cs2 and cd2 and cs3 and ls2 and ls3 and lb
-        ld3 = cs3 and cd3 and cs0 and ls3 and ls0 and lb
+        ud0 = ud1 = ud2 = ud3 = True
+        ld0 = ld1 = ld2 = ld3 = True
 
         # +x -y +z
         if ud0 and self.walkable((x + 1, y - 1, z + 1)):
@@ -209,7 +190,7 @@ class Map:
                      coord2: Tuple[int, int, int]) -> Union[int, float]:
         i1, j1, k1 = coord1
         i2, j2, k2 = coord2
-        return sqrt(abs(i1 - i2) + abs(j1 - j2) + abs(k1 - k2))
+        return sqrt((i1 - i2)**2 + (j1 - j2)**2 + (k1 - k2)**2)
     
 def read_cells_from_file(file_path: str) -> npt.NDArray:
     file = open(file_path)

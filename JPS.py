@@ -15,14 +15,13 @@ class JPS(Map):
         coord_steps = [-1, 0, 1]
         locality = [(coord[0] + x, coord[1] + y, coord[2] + z) \
                     for x in coord_steps for y in coord_steps for z in coord_steps]
-        basic_neighbors = super().get_neighbors(coord)
-
+        locality = [x for x in locality if self.in_bounds(x)]
         obstacle_coords = [x for x in locality if not self.traversable(x)]
         clear_pruning_neighbors = self.get_pruning_vertexes(coord=coord, direction=direction)
         forced_pruning_neighbors = self.get_pruning_vertexes(coord=coord, direction=direction,
                                                              obstacle_vertexes=obstacle_coords)
-        ans = [(coord, True) if coord not in clear_pruning_neighbors \
-                             else (coord, False)\
+        ans = [(coord, False) if coord in clear_pruning_neighbors \
+                             else (coord, True)\
                              for coord in forced_pruning_neighbors]
         return ans
     
@@ -98,7 +97,7 @@ class JPS(Map):
                                         (dx, dy, 0), (dx, 0, dz), (0, dy, dz)]
                 for can_direction in canonical_directions:
                     if self.jump(new_coord, can_direction, goal, recursive=True,\
-                                  scan_depth=scan_depth+1, scan_limit=scan_limit) is not None:
+                                  scan_depth=scan_depth + 1, scan_limit=scan_limit) is not None:
                         return new_coord
             if sum(direction) not in (-1, 1): # 2d-diagonal
                 canonical_directions = [(dx, 0, 0), (0, dy, 0), (0, 0, dz)]
@@ -106,7 +105,7 @@ class JPS(Map):
                     canonical_directions.remove((0, 0, 0))
                 for can_direction in canonical_directions:
                     if self.jump(new_coord, can_direction, goal, recursive=True,\
-                                 scan_depth=scan_depth+1, scan_limit=scan_limit) is not None:
+                                 scan_depth=scan_depth + 1, scan_limit=scan_limit) is not None:
                         return new_coord
         return self.jump(new_coord, direction, goal, recursive,\
                          scan_depth=scan_depth+1, scan_limit=scan_limit)
