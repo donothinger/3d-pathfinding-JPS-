@@ -52,8 +52,11 @@ public class Map {
                 }
             }
         }
-
         return neighbors;
+    }
+
+    public List<Point> getSuccessors(Point point, Point goalPoint) {
+        return this.getNeighbors(point);
     }
 
     public Double computeCost(Point point1, Point point2) {

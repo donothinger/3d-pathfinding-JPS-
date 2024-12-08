@@ -12,7 +12,7 @@ import com.donothinger.dto.Point;
 import lombok.Data;
 
 @Data
-public class SearchTreePQD implements SearchTree{
+public class SearchTreePQD implements SearchTree {
     private PriorityQueue<Node> openList = new PriorityQueue<>(Comparator.comparingDouble(Node::getF));
     private Set<Node> openedSet = new HashSet<Node>();
     private Set<Node> closedSet = new HashSet<Node>();
