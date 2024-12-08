@@ -23,39 +23,39 @@ public class Astar {
 
     public Node run() {
         Integer steps = 0;
-        searchTree.addToOpen(startNode);
+        this.searchTree.addToOpen(this.startNode);
 
-        while (!searchTree.openIsEmpty()) {
+        while (!this.searchTree.openIsEmpty()) {
             steps += 1;
-            Node currentNode = searchTree.getBestNodeFromOpen();
-            searchTree.addToClosed(currentNode);
-
-            if (currentNode == goalNode) {
+            Node currentNode = this.searchTree.getBestNodeFromOpen();
+            this.searchTree.addToClosed(currentNode);
+            System.out.println(steps);
+            if (currentNode.getPoint() == this.goalNode.getPoint()) {
                 System.out.println("During the search, the following number of OPEN dublicates was encountered: " +
-                        String.valueOf(searchTree.getEncOpenDuplicates()));
+                        String.valueOf(this.searchTree.getEncOpenDuplicates()));
                 return currentNode;
             }
 
-            List<Point> successors = taskMap.getSuccessors(currentNode.getPoint(), goalPoint);
+            List<Point> successors = this.taskMap.getSuccessors(currentNode.getPoint(), goalPoint);
 
-            successors.stream()
-                    .forEach(coord -> {
-                        Node newNode = new Node(coord,
-                                currentNode.getG() + this.taskMap.computeCost(currentNode.getPoint(), coord),
-                                heuristic.calculate(coord, this.goalPoint));
-                        if (!this.searchTree.wasOpened(newNode)) {
-                            this.searchTree.addToOpen(newNode);
-                        } else {
-                            if (!searchTree.wasExpanded(newNode)) {
-                                Node oldNode = this.searchTree.findNode(coord);
-                                if (oldNode.getF() > newNode.getF()) {
-                                    oldNode.setG(newNode.getG());
-                                    oldNode.setF(newNode.getF());
-                                    oldNode.setParent(newNode.getParent());
-                                }
-                            }
+            for (Point coord : successors) {
+                Node newNode = new Node(coord,
+                        currentNode.getG() + this.taskMap.computeCost(currentNode.getPoint(), coord),
+                        this.heuristic.calculate(coord, this.goalPoint), currentNode);
+                if (!this.searchTree.wasOpened(newNode)) {
+                    this.searchTree.addToOpen(newNode);
+                } else {
+                    if (!this.searchTree.wasExpanded(newNode)) {
+                        Node oldNode = this.searchTree.findNode(coord);
+                        if (oldNode.getF() > newNode.getF()) {
+                            oldNode.setG(newNode.getG());
+                            oldNode.setF(newNode.getF());
+                            oldNode.setParent(newNode.getParent());
                         }
-                    });
+                    }
+                }
+            }
+            ;
 
         }
         return null;
@@ -68,8 +68,8 @@ public class Astar {
         this.heuristic = heuristic;
         this.searchTree = searchTree;
 
-        this.startNode = new Node(startPoint, 0.0, heuristic.calculate(starPoint, goalPoint));
-        this.goalNode = new Node(goalPoint, 0.0, 0.0);
+        this.startNode = new Node(startPoint, 0.0, heuristic.calculate(starPoint, goalPoint), null);
+        this.goalNode = new Node(goalPoint, 0.0, 0.0, null);
     }
 
     public Astar(Map taskMap, Node startNode, Node goalNode, Heuristic heuristic, SearchTree searchTree) {

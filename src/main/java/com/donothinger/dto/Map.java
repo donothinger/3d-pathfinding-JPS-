@@ -4,14 +4,16 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Scanner;
+import java.util.Set;
 
 import lombok.Data;
 
 @Data
 public class Map {
-    private Integer[][][] cells;
+    private Set<Point> obstacleSet;
     private Integer height;
     private Integer width;
     private Integer depth;
@@ -23,7 +25,7 @@ public class Map {
     }
 
     public Boolean traversable(Point point) {
-        return this.cells[point.x][point.y][point.z] != 1;
+        return this.obstacleSet.contains(point);
     }
 
     public Boolean walkable(Point point) {
@@ -61,32 +63,37 @@ public class Map {
                 (point1.z - point2.z) * (point1.z - point2.z));
     }
 
-    public Map readFromFile(String filePath) {
+    public Map(String filePath) {
         Scanner scanner;
         try {
             scanner = new Scanner(new File(filePath));
         } catch (FileNotFoundException e) {
             e.printStackTrace();
-            return null;
+            return;
         }
-        Integer height = scanner.nextInt(); 
-        Integer width = scanner.nextInt();
-        Integer depth = scanner.nextInt();
-        Integer[][][] cells = new Integer[height][width][depth];
-        while (scanner.hasNextInt()) {
-            Integer x = scanner.nextInt();
-            Integer y = scanner.nextInt();
-            Integer z = scanner.nextInt();
-            cells[x - 1][y - 1][z - 1] = 1;
+        String line = scanner.nextLine();
+        String[] parts = line.split(" ");
+        Integer height = Integer.parseInt(parts[0]);
+        Integer width = Integer.parseInt(parts[1]);
+        Integer depth = Integer.parseInt(parts[2]);
+        Set<Point> obstacleSet = new HashSet<Point>();
+        while (scanner.hasNextLine()) {
+            line = scanner.nextLine();
+            parts = line.split(" ");
+            if (parts.length < 3) {
+                System.out.println("Некорректная строка для координат: " + line);
+                continue;
+            }
+            Integer x = Integer.parseInt(parts[0]);
+            Integer y = Integer.parseInt(parts[1]);
+            Integer z = Integer.parseInt(parts[2]);
+            Point newPoint = new Point(x, y, z);
+            obstacleSet.add(newPoint);
         }
+        this.height = height;
+        this.width = width;
+        this.depth = depth;
+        this.obstacleSet = obstacleSet;
         scanner.close();
-        return new Map(cells);
-
-    }
-    public Map(Integer[][][] new_cells) {
-        this.cells = new_cells;
-        this.height = new_cells.length;
-        this.width = new_cells[0].length;
-        this.depth = new_cells[0][0].length;
     }
 }

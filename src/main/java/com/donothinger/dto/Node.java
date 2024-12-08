@@ -14,10 +14,11 @@ public class Node {
     public Double f;
     public Node parent;
 
-    public Node(Point point, Double g, Double h) {
+    public Node(Point point, Double g, Double h, Node parent) {
         this.point = point;
         this.g = g;
         this.h = h;
         this.f = g + h;
+        this.parent = parent;
     }
 }

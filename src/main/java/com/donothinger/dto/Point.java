@@ -6,7 +6,7 @@ import lombok.EqualsAndHashCode;
 
 @AllArgsConstructor
 @Data
-@EqualsAndHashCode(exclude = { "x", "y", "z" })
+@EqualsAndHashCode
 public class Point {
     public Integer x;
     public Integer y;

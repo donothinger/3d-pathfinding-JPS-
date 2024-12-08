@@ -42,6 +42,7 @@ public class SearchTreePQD implements SearchTree {
     @Override
     public Node getBestNodeFromOpen() {
         if (this.openIsEmpty()) {
+            System.out.println("Empty");
             return null;
         }
         Node bestNode = openList.remove();
