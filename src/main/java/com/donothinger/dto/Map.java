@@ -1,8 +1,11 @@
 package com.donothinger.dto;
 
+import java.io.File;
+import java.io.FileNotFoundException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Scanner;
 
 import lombok.Data;
 
@@ -12,13 +15,6 @@ public class Map {
     private Integer height;
     private Integer width;
     private Integer depth;
-
-    public Map(Integer[][][] new_cells) {
-        this.cells = new_cells;
-        this.height = new_cells.length;
-        this.width = new_cells[0].length;
-        this.depth = new_cells[0][0].length;
-    }
 
     public Boolean inBounds(Point point) {
         return 0 <= point.x && point.x < this.height &&
@@ -63,5 +59,34 @@ public class Map {
         return Math.sqrt((point1.x - point2.x) * (point1.x - point2.x) +
                 (point1.y - point2.y) * (point1.y - point2.y) +
                 (point1.z - point2.z) * (point1.z - point2.z));
+    }
+
+    public Map readFromFile(String filePath) {
+        Scanner scanner;
+        try {
+            scanner = new Scanner(new File(filePath));
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+            return null;
+        }
+        Integer height = scanner.nextInt(); 
+        Integer width = scanner.nextInt();
+        Integer depth = scanner.nextInt();
+        Integer[][][] cells = new Integer[height][width][depth];
+        while (scanner.hasNextInt()) {
+            Integer x = scanner.nextInt();
+            Integer y = scanner.nextInt();
+            Integer z = scanner.nextInt();
+            cells[x - 1][y - 1][z - 1] = 1;
+        }
+        scanner.close();
+        return new Map(cells);
+
+    }
+    public Map(Integer[][][] new_cells) {
+        this.cells = new_cells;
+        this.height = new_cells.length;
+        this.width = new_cells[0].length;
+        this.depth = new_cells[0][0].length;
     }
 }
