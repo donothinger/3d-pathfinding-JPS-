@@ -20,7 +20,7 @@ public class Map {
         this.depth = new_cells[0][0].length;
     }
 
-    public Boolean in_bounds(Point point) {
+    public Boolean inBounds(Point point) {
         return 0 <= point.x && point.x < this.height &&
                 0 <= point.y && point.y < this.width &&
                 0 <= point.z && point.z < this.depth;
@@ -31,7 +31,7 @@ public class Map {
     }
 
     public Boolean walkable(Point point) {
-        return this.in_bounds(point) && this.traversable(point);
+        return this.inBounds(point) && this.traversable(point);
     }
 
     public List<Point> getNeighbors(Point point) {
