@@ -14,7 +14,7 @@ class JPS(Map):
                                  ) -> List[Tuple[Tuple[int, int, int], bool]]:
         coord_steps = [-1, 0, 1]
         locality = [(coord[0] + x, coord[1] + y, coord[2] + z) \
-                    for x in coord_steps for y in coord_steps for z in coord_steps]
+                    for x in coord_steps for y in coord_steps for z in coord_steps if (x, y, z) != (0, 0, 0)]
         locality = [x for x in locality if self.in_bounds(x)]
         obstacle_coords = [x for x in locality if not self.traversable(x)]
         clear_pruning_neighbors = self.get_pruning_vertexes(coord=coord, direction=direction)
@@ -22,7 +22,8 @@ class JPS(Map):
                                                              obstacle_vertexes=obstacle_coords)
         ans = [(coord, False) if coord in clear_pruning_neighbors \
                              else (coord, True)\
-                             for coord in forced_pruning_neighbors]
+                             for coord in forced_pruning_neighbors if coord in locality]
+        #print(coord, ans)
         return ans
     
     # Local dijkstra (on 3x3x3 grid)
@@ -65,12 +66,11 @@ class JPS(Map):
         ans = []
         for anode in dijkstra_results_from_current:
             for bnode in dijkstra_results_from_parent:
-                if(anode.coord != bnode.coord):
-                    continue
-                if(bnode.g <= anode.g):
-                    ans.append((coord[0] + anode.coord[0] - 1, 
-                                coord[1] + anode.coord[1] - 1,
-                                coord[2] + anode.coord[2] - 1))
+                if(anode.coord == bnode.coord):
+                    if(bnode.g == anode.g):
+                        ans.append((coord[0] + anode.coord[0] - 1, 
+                                    coord[1] + anode.coord[1] - 1,
+                                    coord[2] + anode.coord[2] - 1))
         
         return ans
     
@@ -78,7 +78,7 @@ class JPS(Map):
              coord: Tuple[int, int, int], 
              direction: Tuple[int, int, int],
              goal: Tuple[int, int, int], recursive:bool =False,\
-             scan_depth: int = 0, scan_limit: int = 1):
+             scan_depth: int = 0, scan_limit: int = 50):
         if scan_depth >= scan_limit:
             return coord
         i, j, k = coord
@@ -90,6 +90,7 @@ class JPS(Map):
             return new_coord
         for neigh in self.get_not_pruned_neighbors(new_coord, direction):
             if neigh[1]:
+                print(neigh)
                 return new_coord
         if not recursive:
             if 0 not in direction: # 3d-diagonal
