@@ -5,6 +5,7 @@ __pycache__/
 maps
 benchmarks
 test.ipynb
+.vscode
 
 # C extensions
 *.so

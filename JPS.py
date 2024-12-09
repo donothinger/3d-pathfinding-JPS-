@@ -68,9 +68,9 @@ class JPS(Map):
                 if(anode.coord != bnode.coord):
                     continue
                 if(bnode.g <= anode.g):
-                    ans.append((coord[0] + anode.coord[0], 
-                                coord[1] + anode.coord[1],
-                                coord[2] + anode.coord[2]))
+                    ans.append((coord[0] + anode.coord[0] - 1, 
+                                coord[1] + anode.coord[1] - 1,
+                                coord[2] + anode.coord[2] - 1))
         
         return ans
     
@@ -78,7 +78,7 @@ class JPS(Map):
              coord: Tuple[int, int, int], 
              direction: Tuple[int, int, int],
              goal: Tuple[int, int, int], recursive:bool =False,\
-             scan_depth: int = 0, scan_limit: int = 20):
+             scan_depth: int = 0, scan_limit: int = 1):
         if scan_depth >= scan_limit:
             return coord
         i, j, k = coord
