@@ -65,135 +65,96 @@ class Map:
             neighbors.append((x, y, z - 1))
             lb = True
 
-        cd0 = cs0 and cs1
-        cd1 = cs1 and cs2
-        cd2 = cs2 and cs3
-        cd3 = cs3 and cs0
-
-        us0 = cs0 and ut
-        us1 = cs1 and ut
-        us2 = cs2 and ut
-        us3 = cs3 and ut
-
-        ls0 = cs0 and lb
-        ls1 = cs1 and lb
-        ls2 = cs2 and lb
-        ls3 = cs3 and lb
-
-
         # +x -y
-        if cd0 and self.walkable((x + 1, y - 1, z)):
+        if cs0 and cs1 and self.walkable((x + 1, y - 1, z)):
             neighbors.append((x + 1, y - 1, z))
-        else:
-            cd0 = False
+            cd0 = True
 
         # +x +y
-        if cd1 and self.walkable((x + 1, y + 1, z)):
+        if cs1 and cs2 and self.walkable((x + 1, y + 1, z)):
             neighbors.append((x + 1, y + 1, z))
-        else:
-            cd1 = False
+            cd1 = True
 
         # -x +y
-        if cd2 and self.walkable((x - 1, y + 1, z)):
+        if cs2 and cs3 and self.walkable((x - 1, y + 1, z)):
             neighbors.append((x - 1, y + 1, z))
-        else:
-            cd2 = False
+            cd2 = True
 
         # -x -y
-        if cd3 and self.walkable((x - 1, y - 1, z)):
+        if cs0 and cs3 and self.walkable((x - 1, y - 1, z)):
             neighbors.append((x - 1, y - 1, z))
-        else:
-            cd3 = False
+            cd3 = True
 
         # -y +z
-        if us0 and self.walkable((x, y - 1, z + 1)):
+        if cs0 and ut and self.walkable((x, y - 1, z + 1)):
             neighbors.append((x, y - 1, z + 1))
-        else:
-            us0 = False
+            us0 = True
 
         # +x +z
-        if us1 and self.walkable((x + 1, y, z + 1)):
+        if cs1 and ut and self.walkable((x + 1, y, z + 1)):
             neighbors.append((x + 1, y, z + 1))
-        else:
-            us1 = False
+            us1 = True
 
         # +y +z
-        if us2 and self.walkable((x, y + 1, z + 1)):
+        if cs2 and ut and self.walkable((x, y + 1, z + 1)):
             neighbors.append((x, y + 1, z + 1))
-        else:
-            us2 = False
+            us2 = True
 
         # -x +z
-        if us3 and self.walkable((x - 1, y, z + 1)):
+        if cs3 and ut and self.walkable((x - 1, y, z + 1)):
             neighbors.append((x - 1, y, z + 1))
-        else:
-            us3 = False
+            us3 = True
 
         # -y -z
-        if ls0 and self.walkable((x, y - 1, z - 1)):
+        if cs0 and lb and self.walkable((x, y - 1, z - 1)):
             neighbors.append((x, y - 1, z - 1))
-        else:
-            ls0 = False
+            ls0 = True
 
         # +x -z
-        if ls1 and self.walkable((x + 1, y, z - 1)):
+        if cs1 and lb and self.walkable((x + 1, y, z - 1)):
             neighbors.append((x + 1, y, z - 1))
-        else:
-            ls1 = False
+            ls1 = True
 
         # +y -z
-        if ls2 and self.walkable((x, y + 1, z - 1)):
+        if cs2 and lb and self.walkable((x, y + 1, z - 1)):
             neighbors.append((x, y + 1, z - 1))
-        else:
-            ls2 = False
+            ls2 = True
 
         # -x -z
-        if ls3 and self.walkable((x - 1, y, z - 1)):
+        if cs3 and lb and self.walkable((x - 1, y, z - 1)):
             neighbors.append((x - 1, y, z - 1))
-        else:
-            ls3 = False
-
-        # remaining daigonal neighbors
-        ud0 = cs0 and cd0 and cs1 and us0 and us1 and ut
-        ud1 = cs1 and cd1 and cs2 and us1 and us2 and ut
-        ud2 = cs2 and cd2 and cs3 and us2 and us3 and ut
-        ud3 = cs3 and cd3 and cs0 and us3 and us0 and ut
-
-        ld0 = cs0 and cd0 and cs1 and ls0 and ls1 and lb
-        ld1 = cs1 and cd1 and cs2 and ls1 and ls2 and lb
-        ld2 = cs2 and cd2 and cs3 and ls2 and ls3 and lb
-        ld3 = cs3 and cd3 and cs0 and ls3 and ls0 and lb
+            ls3 = True
 
         # +x -y +z
-        if ud0 and self.walkable((x + 1, y - 1, z + 1)):
+        if cd0 and us1 and us0 and self.walkable((x + 1, y - 1, z + 1)):
             neighbors.append((x + 1, y - 1, z + 1))
 
         # +x +y +z
-        if ud1 and self.walkable((x + 1, y + 1, z + 1)):
+        if cd1 and us1 and us2 and self.walkable((x + 1, y + 1, z + 1)):
             neighbors.append((x + 1, y + 1, z + 1))
 
         # -x +y +z
-        if ud2 and self.walkable((x - 1, y + 1, z + 1)):
+        if cd2 and us3 and us2 and self.walkable((x - 1, y + 1, z + 1)):
             neighbors.append((x - 1, y + 1, z + 1))
 
         # -x -y +z
-        if ud3 and self.walkable((x - 1, y - 1, z + 1)):
+        if cd3 and us3 and us0 and self.walkable((x - 1, y - 1, z + 1)):
             neighbors.append((x - 1, y - 1, z + 1))
 
         # +x -y -z
-        if ld0 and self.walkable((x + 1, y - 1, z - 1)):
+        if cd0 and ls1 and ls0 and self.walkable((x + 1, y - 1, z - 1)):
             neighbors.append((x + 1, y - 1, z - 1))
 
         # +x +y -z
-        if ld1 and self.walkable((x + 1, y + 1, z - 1)):
+        if cd1 and ls1 and ls2 and self.walkable((x + 1, y + 1, z - 1)):
             neighbors.append((x + 1, y + 1, z - 1))
 
         # -x +y -z
-        if ld2 and self.walkable((x - 1, y + 1, z - 1)):
+        if cd2 and ls3 and ls2 and self.walkable((x - 1, y + 1, z - 1)):
             neighbors.append((x - 1, y + 1, z - 1))
 
         # -x -y -z
-        if ld3 and self.walkable((x - 1, y - 1, z - 1)):
+        if cd3 and ls3 and ls0 and self.walkable((x - 1, y - 1, z - 1)):
             neighbors.append((x - 1, y - 1, z - 1))
 
         return neighbors
@@ -209,7 +170,7 @@ class Map:
                      coord2: Tuple[int, int, int]) -> Union[int, float]:
         i1, j1, k1 = coord1
         i2, j2, k2 = coord2
-        return sqrt(abs(i1 - i2) + abs(j1 - j2) + abs(k1 - k2))
+        return sqrt((i1 - i2)**2 + (j1 - j2)**2 + (k1 - k2)**2)
     
 def read_cells_from_file(file_path: str) -> npt.NDArray:
     file = open(file_path)
