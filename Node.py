@@ -27,8 +27,4 @@ class Node:
         return hash(str(self.coord))
 
     def __lt__(self, other):
-        # # lt_g_max:
-        # if self.f == other.f:
-        #     return self.g > other.g
-        # return self.f < other.f
         return self.f < other.f
