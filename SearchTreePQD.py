@@ -16,16 +16,7 @@ class SearchTreePQD:
         return len(self._open) == 0
 
     def add_to_open(self, item: Node):
-
-        for prior, existing_node in self._open:
-            if existing_node == item:
-                if existing_node.g > item.g:
-                    existing_node.g = item.g
-                    existing_node.f = item.f
-                    existing_node.parent = item.parent
-                return
         heappush(self._open, (item.f, item))
-
         self._opened.add(item.coord)
 
     def get_best_node_from_open(self) -> Optional[Node]:
