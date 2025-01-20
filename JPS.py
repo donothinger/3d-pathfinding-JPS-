@@ -1,3 +1,5 @@
+# в этой версии в jump передаются соседи
+
 from typing import Dict, List, Tuple, Union
 import math
 import numpy as np
@@ -29,6 +31,7 @@ class JPS(Map):
                               1 - direction[1],
                               1 - direction[2])
         coord_steps = [-1, 0, 1]
+
         locality = [(coord[0] + x, coord[1] + y, coord[2] + z)
                     for x in coord_steps for y in coord_steps for z in coord_steps]
         if not canonical:
@@ -89,17 +92,19 @@ class JPS(Map):
     def get_not_pruned_neighbors(self,
                                  coord: Tuple[int, int, int],
                                  direction: Tuple[int, int, int]
-                                 ) -> set[Tuple[Tuple[int, int, int], bool]]:
+                                 ) -> [set[Tuple[Tuple[int, int, int], bool]], bool]:
 
         all_not_pruned = self.get_not_pruned(coord=coord, direction=direction)
         canonical = self.get_not_pruned(coord=coord, direction=direction, canonical=True)
         forced = all_not_pruned - canonical
         ans = set()
+        has_forced = False
         for c in canonical:
             ans |= {(c, False)}
         for f in forced:
             ans |= {(f, True)}
-        return ans
+            has_forced =True
+        return ans, has_forced
 
     def sign(self, d):
         if d > 0:
@@ -114,9 +119,8 @@ class JPS(Map):
              neighbors: Union[set[Tuple[int, int, int]], set[Tuple[Tuple[int, int, int], bool]]],
              goal: Tuple[int, int, int],
              recursive: bool = False,
-             scan_limit: float = 4,
+             scan_limit: float = 30,
              penalty_sum: float = 0):
-
         rec_dx, rec_dy, rec_dz = self.sign(goal[0] - coord[0]), self.sign(goal[1] - coord[1]), self.sign(
             goal[2] - coord[2])
         i, j, k = coord
@@ -129,10 +133,9 @@ class JPS(Map):
                         + voxel_heuristic(new_coord, rec_coord) - voxel_heuristic(coord, rec_coord))
         if new_coord == goal:
             return {new_coord}
-        new_neighbors = set(self.get_not_pruned_neighbors(new_coord, direction))
-        for neigh in new_neighbors:
-            if neigh[1]:
-                return {new_coord}
+        new_neighbors, has_forced = self.get_not_pruned_neighbors(new_coord, direction)
+        if has_forced:
+            return {new_coord}
         if not recursive:
             if 0 not in direction:  # 3d-diagonal
                 canonical_directions = [(dx, 0, 0), (0, dy, 0), (0, 0, dz),
@@ -153,7 +156,6 @@ class JPS(Map):
         if penalty_sum > scan_limit:
             return {new_coord}
         return self.jump(new_coord, direction, new_neighbors, goal, recursive,
-                         # scan_depth=scan_depth + 1,
                          penalty_sum=penalty_sum,
                          scan_limit=scan_limit)
 
@@ -163,7 +165,7 @@ class JPS(Map):
         if parent:
             neighbors = self.get_not_pruned_neighbors(coord, (
                 self.sign(coord[0] - parent.coord[0]), self.sign(coord[1] - parent.coord[1]),
-                self.sign(coord[2] - parent.coord[2])))
+                self.sign(coord[2] - parent.coord[2])))[0]
             delta = [(neighbor[0][0] - coord[0], neighbor[0][1] - coord[1], neighbor[0][2] - coord[2]) for neighbor in
                      neighbors]
         else:
@@ -173,6 +175,10 @@ class JPS(Map):
             successor = self.jump(coord, direction, neighbors, goal)
             if successor:
                 successors |= successor
+        # if parent:
+        #     print(coord, parent.coord, successors)
+        # else:
+        #     print((coord, parent, successors))
         return successors
 
 
