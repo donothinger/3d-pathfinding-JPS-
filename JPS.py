@@ -23,12 +23,12 @@ class JPS(Map):
                        canonical: bool = False,
                        ) -> set[Tuple[int, int, int]]:
 
-        local_cells = np.zeros((5, 5, 5), dtype=np.int8)
-        current_local_coord = (2, 2, 2)
-        parent_local_coord = (2 - direction[0],
-                              2 - direction[1],
-                              2 - direction[2])
-        coord_steps = [-2, -1, 0, 1, 2]
+        local_cells = np.zeros((3, 3, 3), dtype=np.int8)
+        current_local_coord = (1, 1, 1)
+        parent_local_coord = (1 - direction[0],
+                              1 - direction[1],
+                              1 - direction[2])
+        coord_steps = [-1, 0, 1]
         locality = [(coord[0] + x, coord[1] + y, coord[2] + z)
                     for x in coord_steps for y in coord_steps for z in coord_steps]
         if not canonical:
@@ -37,15 +37,15 @@ class JPS(Map):
             obstacle_vertexes = [x for x in locality if not self.in_bounds(x)]
 
         for vertex in obstacle_vertexes:
-            vertex_local_coord = (2 + vertex[0] - coord[0],
-                                  2 + vertex[1] - coord[1],
-                                  2 + vertex[2] - coord[2])
+            vertex_local_coord = (1 + vertex[0] - coord[0],
+                                  1 + vertex[1] - coord[1],
+                                  1 + vertex[2] - coord[2])
             local_cells[vertex_local_coord] = 1
 
         locality = JPS(local_cells)
         all_neighbors = set(self.get_neighbors(coord))  # глобальные координаты соседей
 
-        imaginary_node = Node((5, 5, 5))  # Not a real node
+        imaginary_node = Node((3, 3, 3))  # Not a real node
         parent_node_local = Node(parent_local_coord,
                                  g=0)
         current_node_local = Node(current_local_coord,
@@ -69,10 +69,10 @@ class JPS(Map):
         # anode, bnode - локальные
         for anode in dijkstra_results_from_current:
             for bnode in dijkstra_results_from_parent:
-                if anode.coord == bnode.coord and anode.coord != (2, 2, 2):
+                if anode.coord == bnode.coord and anode.coord != (1, 1, 1):
                     if anode.g > bnode.g:
-                        all_neighbors -= {(coord[0] + anode.coord[0] - 2, coord[1] + anode.coord[1] - 2,
-                                           coord[2] + anode.coord[2] - 2)}
+                        all_neighbors -= {(coord[0] + anode.coord[0] - 1, coord[1] + anode.coord[1] - 1,
+                                           coord[2] + anode.coord[2] - 1)}
                     else:
                         dir_cur_anode = abs(anode.coord[0] - current_local_coord[0]) + abs(
                             anode.coord[1] - current_local_coord[1]) + abs(anode.coord[2] - current_local_coord[2])
@@ -82,8 +82,8 @@ class JPS(Map):
                                    parent_local_coord[2] + anode.coord[2] - current_local_coord[2])
                         if (dir_par_cur < dir_cur_anode and locality.is_valid(parent_local_coord, between)
                                 and locality.is_valid(between, anode.coord)):
-                            all_neighbors -= {(coord[0] + anode.coord[0] - 2, coord[1] + anode.coord[1] - 2,
-                                               coord[2] + anode.coord[2] - 2)}
+                            all_neighbors -= {(coord[0] + anode.coord[0] - 1, coord[1] + anode.coord[1] - 1,
+                                               coord[2] + anode.coord[2] - 1)}
         return all_neighbors
 
     def get_not_pruned_neighbors(self,
