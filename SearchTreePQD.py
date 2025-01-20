@@ -20,15 +20,11 @@ class SearchTreePQD:
         self._opened.add(item.coord)
 
     def get_best_node_from_open(self) -> Optional[Node]:
-        if not self._open:
-            return None
-        
-        best_node = heappop(self._open)[-1]
-        if(self.was_expanded(best_node)):
+        while not self.open_is_empty():
+            best = heappop(self._open)[-1]
+            if not self.was_expanded(best):
+                return best
             self._enc_open_duplicates += 1
-            return self.get_best_node_from_open()
-        
-        return best_node
 
     def add_to_closed(self, item: Node):
         self._closed[item.coord] = item
