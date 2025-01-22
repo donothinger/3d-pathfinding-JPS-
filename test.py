@@ -3,7 +3,8 @@ import numpy as np
 from Map import read_cells_from_file
 from astar import astar
 from SearchTreePQD import SearchTreePQD
-from JPS import JPS, euclidean_heuristic, voxel_heuristic
+# from JPS import JPS, euclidean_heuristic, voxel_heuristic
+from JPS_new import JPS, euclidean_heuristic, voxel_heuristic
 
 task_map = JPS(read_cells_from_file('Simple.3dmap'))
 tests_file = 'Simple.3dmap.3dscen'
