@@ -1,5 +1,3 @@
-# в этой версии в jump передаются соседи
-
 from typing import Dict, List, Tuple, Union
 import math
 import numpy as np
