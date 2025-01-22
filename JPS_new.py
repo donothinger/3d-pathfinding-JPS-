@@ -23,40 +23,65 @@ class JPS(Map):
                        ) -> set[Tuple[int, int, int]]:
 
         neighbors = set()
+        canonical_obstacles = set()
         if abs(direction[0]) + abs(direction[1]) + abs(direction[2]) == 1:
             if self.walkable((coord[0] + direction[0], coord[1] + direction[1], coord[2] + direction[2])):
                 neighbors |= {(coord[0] + direction[0], coord[1] + direction[1], coord[2] + direction[2])}
+            else:
+                canonical_obstacles |= {(coord[0] + direction[0], coord[1] + direction[1], coord[2] + direction[2])}
         elif abs(direction[0]) + abs(direction[1]) + abs(direction[2]) == 2:
             if self.walkable((coord[0] + direction[0], coord[1], coord[2])) and direction[0]:
                 neighbors |= {(coord[0] + direction[0], coord[1], coord[2])}
+            elif direction[0]:
+                canonical_obstacles |= {(coord[0] + direction[0], coord[1], coord[2])}
             if self.walkable((coord[0], coord[1] + direction[1], coord[2])) and direction[1]:
                 neighbors |= {(coord[0], coord[1] + direction[1], coord[2])}
+            elif direction[1]:
+                canonical_obstacles |= {(coord[0], coord[1] + direction[1], coord[2])}
             if self.walkable((coord[0], coord[1], coord[2] + direction[2])) and direction[2]:
                 neighbors |= {(coord[0], coord[1], coord[2] + direction[2])}
+            elif direction[2]:
+                canonical_obstacles |= {(coord[0], coord[1], coord[2] + direction[2])}
             if self.walkable((coord[0] + direction[0], coord[1] + direction[1], coord[2] + direction[2])):
                 neighbors |= {(coord[0] + direction[0], coord[1] + direction[1], coord[2] + direction[2])}
+            else:
+                canonical_obstacles |= {(coord[0] + direction[0], coord[1] + direction[1], coord[2] + direction[2])}
         else:
             if self.walkable((coord[0] + direction[0], coord[1], coord[2])):
                 neighbors |= {(coord[0] + direction[0], coord[1], coord[2])}
+            else:
+                canonical_obstacles |= {(coord[0] + direction[0], coord[1], coord[2])}
             if self.walkable((coord[0], coord[1] + direction[1], coord[2])):
                 neighbors |= {(coord[0], coord[1] + direction[1], coord[2])}
+            else:
+                canonical_obstacles |= {(coord[0], coord[1] + direction[1], coord[2])}
             if self.walkable((coord[0], coord[1], coord[2] + direction[2])):
                 neighbors |= {(coord[0], coord[1], coord[2] + direction[2])}
+            else:
+                canonical_obstacles |= {(coord[0], coord[1], coord[2] + direction[2])}
             if self.walkable((coord[0] + direction[0], coord[1] + direction[1], coord[2])):
                 neighbors |= {(coord[0] + direction[0], coord[1] + direction[1], coord[2])}
+            else:
+                canonical_obstacles |= {(coord[0] + direction[0], coord[1] + direction[1], coord[2])}
             if self.walkable((coord[0] + direction[0], coord[1], coord[2] + direction[2])):
                 neighbors |= {(coord[0] + direction[0], coord[1], coord[2] + direction[2])}
+            else:
+                canonical_obstacles |= {(coord[0] + direction[0], coord[1], coord[2] + direction[2])}
             if self.walkable((coord[0], coord[1] + direction[1], coord[2] + direction[2])):
                 neighbors |= {(coord[0], coord[1] + direction[1], coord[2] + direction[2])}
+            else:
+                canonical_obstacles |= {(coord[0], coord[1] + direction[1], coord[2] + direction[2])}
             if self.walkable((coord[0] + direction[0], coord[1] + direction[1], coord[2] + direction[2])):
                 neighbors |= {(coord[0] + direction[0], coord[1] + direction[1], coord[2] + direction[2])}
-        return neighbors
+            else:
+                canonical_obstacles |= {(coord[0] + direction[0], coord[1] + direction[1], coord[2] + direction[2])}
+        return neighbors, canonical_obstacles
 
     def has_forced(self,
                    coord: Tuple[int, int, int],
                    direction: Tuple[int, int, int],
                    ) -> bool:
-        canonical_neighbors = self.get_canonical_neighbors(coord, direction)
+        canonical_neighbors, canonical_obstacles = self.get_canonical_neighbors(coord, direction)
         parent = (coord[0] - direction[0], coord[1] - direction[1], coord[2] - direction[2])
         coord_neighbors = set(self.get_neighbors(coord))
         parent_neighbors = set(self.get_neighbors(parent))
@@ -64,7 +89,7 @@ class JPS(Map):
         neigh_obstacles = {(coord[0] + x, coord[1] + y, coord[2] + z)
                     for x in coord_steps for y in coord_steps for z in coord_steps if not self.walkable((coord[0] + x, coord[1] + y, coord[2] + z))} - set(self.get_neighbors(coord))
         # х имеет соседей не из числа канонических и не из числа соседей родителя and имеет рядом препятствие не из числа канонических соседей
-        if len(coord_neighbors - parent_neighbors - canonical_neighbors) and len(neigh_obstacles - canonical_neighbors):
+        if len(coord_neighbors - parent_neighbors - canonical_neighbors) and len(neigh_obstacles - canonical_obstacles):
             return True
         return False
 
