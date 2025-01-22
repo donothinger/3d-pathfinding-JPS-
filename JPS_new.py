@@ -87,7 +87,7 @@ class JPS(Map):
         parent_neighbors = set(self.get_neighbors(parent))
         coord_steps = [-1, 0, 1]
         neigh_obstacles = {(coord[0] + x, coord[1] + y, coord[2] + z)
-                    for x in coord_steps for y in coord_steps for z in coord_steps if not self.walkable((coord[0] + x, coord[1] + y, coord[2] + z))} - set(self.get_neighbors(coord))
+                    for x in coord_steps for y in coord_steps for z in coord_steps if not self.walkable((coord[0] + x, coord[1] + y, coord[2] + z))}
         # х имеет соседей не из числа канонических и не из числа соседей родителя and имеет рядом препятствие не из числа канонических соседей
         if len(coord_neighbors - parent_neighbors - canonical_neighbors) and len(neigh_obstacles - canonical_obstacles):
             return True
