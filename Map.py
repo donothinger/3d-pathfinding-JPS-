@@ -1,17 +1,18 @@
 import numpy as np
 import numpy.typing as npt
 
-from typing import List, Tuple, Union
+from typing import List, Set, Tuple, Union
 from math import sqrt
 
 
 class Map:
-    def __init__(self, cells: npt.NDArray):
+    def __init__(self, cells: npt.NDArray, obstacle_set: Set = set()):
         self._height = cells.shape[0]
         self._width = cells.shape[1]
         self._depth = cells.shape[2]
 
         self._cells = cells
+        self._obstacle_set = obstacle_set
 
     def in_bounds(self, coord: Tuple[int, int, int]) -> bool:
         return 0 <= coord[0] < self._height and 0 <= coord[1] < self._width and 0 <= coord[2] < self._depth
@@ -341,13 +342,15 @@ class Map:
         return sqrt((i1 - i2) ** 2 + (j1 - j2) ** 2 + (k1 - k2) ** 2)
 
 
-def read_cells_from_file(file_path: str) -> npt.NDArray:
+def read_cells_from_file(file_path: str):
     file = open(file_path)
     shape = tuple(map(int, file.readline().split()[1:]))
     cells = np.zeros(shape, dtype=np.int8)
     coordinates = list(map(
         lambda x: tuple(map(int, x.split())),
         file.read().split('\n')[:-1]))
+    obstacle_set = set()
     for coord in coordinates:
         cells[coord] = 1
-    return cells
+        obstacle_set.add(coord)
+    return cells, obstacle_set
