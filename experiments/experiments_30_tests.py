@@ -43,10 +43,10 @@ maps = [("maps/DA1.3dmap", "maps/DA1.3dmap.3dscen", "Map DA1"),
 
 for m in maps:
     difficulty = []
-    tree_size_astar, tree_size_JPS, tree_size_JPS_scan_limit = [], [], []
-    time_astar, time_JPS, time_JPS_scan_limit = [], [], []
-    num_expanded_astar, num_expanded_JPS, num_expanded_JPS_scan_limit = [], [], []
-    num_correct_astar, num_correct_JPS, num_correct_JPS_scan_limit = 0, 0, 0
+    tree_size_astar, tree_size_JPS = [], []
+    time_astar, time_JPS = [], []
+    num_expanded_astar, num_expanded_JPS = [], []
+    num_correct_astar, num_correct_JPS = 0, 0
 
     cells, obstacles = read_cells_from_file(m[0])
     task_map = JPS(cells=cells, obstacle_set=obstacles)
