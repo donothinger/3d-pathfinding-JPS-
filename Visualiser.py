@@ -50,7 +50,6 @@ class Visualiser:
 
     def show(self):
         ax = plt.figure().add_subplot(projection='3d')
-        print(self.x.shape, self.y.shape, self.z.shape, self.voxels.shape, self.color.shape)
         ax.voxels(self.x, self.y, self.z, self.voxels,
                   facecolors=self.color)
         ax.set_aspect('equal')
